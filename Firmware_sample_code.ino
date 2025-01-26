@@ -1,5 +1,7 @@
-// ROTRIX Application Firmware Multi-Sensor Integration Sample Source Code
-// © REUDE Technologies Pvt. Ltd 2025
+// ROTRIX Application Firmware: Multi-Sensor Integration Source Code
+//
+// Copyright (c) 2025 REUDE Technologies Pvt. Ltd.
+// MIT License 
 //
 // This source code provides a starting point for integrating multiple sensors and actuators with the ROTRIX platform. 
 // Users can extend or modify the code to suit their specific sensor and hardware requirements. 
@@ -9,8 +11,6 @@
 // REUDE Technologies Pvt. Ltd. shall not be held liable for any mishappenings, damages, or malfunctions arising from the use of this code.
 // 
 // GitHub: https://github.com/REUDE-Technologies/REUDE_ROTRIX.git
-//
-// License: 
 //
 // Prerequisites: 
 // Before using this sample code, ensure the following additional libraries are installed in your Arduino IDE,
@@ -22,12 +22,12 @@
 // SPI - For SPI communication with the RGB camera.
 //
 // This code supports the following hardware components:
-// Load cells with HX711 amplifiers, RPM Sensor, voltage & current Sensors
+// Load cells with HX711 amplifiers, RPM Sensor, voltage & current sensors
 // and is specific to the following sensors:
 // Arducam 2 MP Mini module with OV2640 sensor & Adafruit MLX90640 IR thermal camera
 //
 // Customizing for Your Needs:
-// Update the pin assignments to match your hardware configuration.
+// Update the pin assignments and variable values to match your hardware configuration.
 // Adjust calibration factors (e.g., for load cells) as per your sensors.
 // Extend the code by adding support for new sensors or additional processing.
 
@@ -45,27 +45,27 @@ String device_id = "REU_MTB_001"
 const int numValues = 4; 
 
 /* Initializing ESC variables with standard PWM values */
-unsigned int ESC_min = 1000;                        // Minimum ESC PWM value (µs)
-unsigned int ESC_max = 2000;                        // Maximum ESC PWM value (µs)
+unsigned int ESC_min;                                 // Minimum ESC PWM value (µs)
+unsigned int ESC_max;                                 // Maximum ESC PWM value (µs)
 
 /* Motor setup */
 Servo mot;
-const int MOTOR_SIGNAL_PIN = 4;                     // Motor - ESC signal pin  
+const int MOTOR_SIGNAL_PIN;                           // Motor - ESC signal pin  
 unsigned int current_PWM = ESC_min;
 unsigned int input_PWM = ESC_min;
 
 /* HX711 amplifier - load cell variables setup based on HX711 library */
 HX711 scale1;
 HX711 scale2;
-const int LOADCELL1_DOUT_PIN = 7;                   // Thrust loadcell - amplifier pins
-const int LOADCELL1_SCK_PIN = 6;
-const int LOADCELL2_DOUT_PIN = 8;                   // Torque loadcell - amplifier pins
-const int LOADCELL2_SCK_PIN = 9;
-long calibration_factor_1 = 85000.0;                // Thrust loadcell calibration value
-long calibration_factor_2 = 94600.0;                // Torque loadcell calibration value
+const int LOADCELL1_DOUT_PIN;                         // Thrust loadcell - amplifier pins
+const int LOADCELL1_SCK_PIN;
+const int LOADCELL2_DOUT_PIN;                         // Torque loadcell - amplifier pins
+const int LOADCELL2_SCK_PIN;
+long calibration_factor_1;                            // Thrust loadcell calibration value
+long calibration_factor_2;                            // Torque loadcell calibration value
 
 /* RPM sensor variables */
-byte PulsesPerRevolution = 2;                       // number of propeller blades
+byte PulsesPerRevolution;                             // number of propeller blades
 const unsigned long ZeroTimeout = 100000;          
 volatile unsigned long LastTimeWeMeasured;
 volatile unsigned long PeriodBetweenPulses = ZeroTimeout + 1000;
@@ -79,7 +79,7 @@ unsigned long FrequencyReal;
 unsigned long RPM;
 unsigned long LastTimeCycleMeasure = LastTimeWeMeasured;
 unsigned long CurrentMicros = micros();
-const int RPM_SENSOR_PIN = 2;                       // RPM sensor signal pin
+const int RPM_SENSOR_PIN;                            // RPM sensor signal pin
 
 /* Voltage & current sensor variables */
 float sensorValue_volt;
@@ -87,32 +87,32 @@ float batt_volt;
 float sensorValue_current;
 float batt_current;
 
-const int CURRENT_SENSOR_PIN = A0;                  // current sensor analog signal pin
-const float MAX_CURRENT = 200;                      // current sensor maximum value (A) 
-const float divider_current = 60.6;                 // current sensor divider value
-const int VOLTAGE_SENSOR_PIN = A1;                  // voltage sensor analog signal pin
-const float MAX_VOLTAGE = 51.81;                    // voltage sensor maximum value (V)
-const float divider_volt = 15.7;                    // voltage sensor divider value
+const int CURRENT_SENSOR_PIN;                        // current sensor analog signal pin
+const float MAX_CURRENT;                             // current sensor maximum value (A) (range: 0-200) 
+const float divider_current;                         // current sensor divider value 
+const int VOLTAGE_SENSOR_PIN;                        // voltage sensor analog signal pin
+const float MAX_VOLTAGE;                             // voltage sensor maximum value (V) (range: 0-58)
+const float divider_volt;                            // voltage sensor divider value
 
 /* Thermal camera variables setup based on MLX90640 library */
 Adafruit_MLX90640 mlx;
-float frame[32*24];                                 // buffer for full frame of temperatures
-float Ta;                                           // Ambient temperature value           
+float frame[32*24];                                  // buffer for full frame of temperatures
+float Ta;                                            // Ambient temperature value           
 float t;                                      
 
 /* RGB camera variables*/
-static const int CS = 10;                            
+static const int CS;                                 // RGB camera Chip Select (CS) pin                      
 Serial_ArduCAM_FrameGrabber fg;
 ArduCAM_Mini_2MP myCam(CS, &fg);
-const int width = 320;                                // RGB camera set resolution
-const int height = 240;                               // RGB camera set resolution
-const int = markers = 4;                              // no. of markers in RGB data
+const int width;                                     // RGB camera set resolution
+const int height;                                    // RGB camera set resolution
+const int markers = 4;                               // no. of markers in RGB data
 const int arraySize = (width * height * 3) + markers; 
 unsigned int array[arraySize];
 
-const byte START_MARKER[] = {0xAA, 0xBB};           // Markers to mark start of an array
-const byte END_MARKER[] = {0xDD, 0xEE};             // Markers to mark end of an array
-int count = 1;
+const byte START_MARKER[] = {0xAA, 0xBB};            // Markers to mark start of an array
+const byte END_MARKER[] = {0xDD, 0xEE};              // Markers to mark end of an array
+int check = 1;
 
 void setup() {
     Serial.begin(115200);
@@ -147,7 +147,7 @@ void setup() {
 
     Wire.begin();
     SPI.begin();
-    myCam.beginJpeg320x240();                          // Start the camera image size  
+    myCam.beginJpeg320x240();                            // Start the camera image size  
 
     delay(100);
 }
@@ -171,7 +171,7 @@ void loop() {
         token = strtok(NULL, ","); 
         }
     }
-    if (count == 1) {
+    if (check == 1) {
     mot.attach(4, ESC_min, ESC_max);
     mot.writeMicroseconds(ESC_min);
     count ++;
