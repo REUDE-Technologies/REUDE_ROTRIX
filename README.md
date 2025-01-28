@@ -6,7 +6,7 @@ This report provides guidance on designing the hardware and firmware necessary t
 The integration of a motor thrust test bed with the ROTRIX application requires a thorough understanding of both hardware and firmware. This manual guides users through selecting the appropriate components and developing firmware that ensures smooth data exchange between the test bed and the software. By following this guide, users can unlock ROTRIX's full potential to assess and optimize drone powertrain configurations. A complete documentation on the ROTRIX firmware can be found at this link.
 ## Hardware
 This section outlines the hardware requirements essential for integrating the thrust test bed with the ROTRIX application. 
-A list of potential hardware components that can be used to build the thrust bed and connect with the software can be viewed here.
+A list of potential hardware components that can be used to build the thrust bed and connect with the software can be viewed [here](https://github.com/REUDE-Technologies/REUDE_ROTRIX/blob/9da665a63edde41015f87db99a2621a0f7748934/Firmware/Hardware.pdf).
 
 ## Software
 The integration process requires two primary software tools:
